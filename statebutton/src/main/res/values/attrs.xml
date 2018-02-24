@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="StateButton">
+        <attr name="sb_marginTop" format="dimension" />
+        <attr name="sb_marginBottom" format="dimension" />
+        <attr name="sb_marginLeft" format="dimension" />
+        <attr name="sb_marginRight" format="dimension" />
+        <attr name="sb_hasDisabledState" format="boolean" />
+    </declare-styleable>
+</resources>
