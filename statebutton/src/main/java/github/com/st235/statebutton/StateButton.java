@@ -6,6 +6,8 @@ package github.com.st235.statebutton;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.IntRange;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -16,28 +18,28 @@ import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import github.com.st235.statebutton.events.EndAnimationListener;
-import github.com.st235.statebutton.events.OnStateChangedListener;
-
+/**
+ * Button for working with states.
+ */
 public class StateButton extends FrameLayout implements View.OnClickListener {
 
     private final int DEFAULT_STATE = 0;
 
-    private int statesAmount;
+    private long duration = 400L;
     private int currentState = DEFAULT_STATE;
+    private boolean hasDisabledState = false;
 
-    private AppCompatImageView[] imageViews;
-
+    private int statesAmount;
     private int marginTop;
     private int marginBottom;
     private int marginLeft;
+
     private int marginRight;
 
-    private boolean hasDisabledState = false;
-
-    private long duration = 400L;
-
+    @Nullable
     private OnStateChangedListener listener;
+
+    private AppCompatImageView[] imageViews;
 
     public StateButton(Context context) {
         this(context, null);
@@ -66,14 +68,58 @@ public class StateButton extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public void setDuration(long duration) {
+    /**
+     * Sets the duration of the animation
+     * @param duration current animation duration
+     */
+    public void setDuration(@IntRange(from = 0) long duration) {
         this.duration = duration;
     }
 
+    /**
+     * Sets the animation listener
+     * @param listener current animation listener
+     */
     public void setOnStateChangedListener(OnStateChangedListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Adds the states set
+     * @param defaultState the default state
+     * @param anotherStates another states
+     */
+    public void addStatesDrawable(@DrawableRes int defaultState,
+                                  @DrawableRes int... anotherStates) {
+        statesAmount = anotherStates.length + getPositionOffset();
+        imageViews = new AppCompatImageView[statesAmount];
+
+        imageViews[DEFAULT_STATE] = addImageView(defaultState, VISIBLE);
+
+        if (hasDisabledState) {
+            imageViews[DEFAULT_STATE + 1] = addImageView(defaultState, GONE);
+        }
+
+        for (int i = 0; i < anotherStates.length; i++) {
+            imageViews[i + getPositionOffset()] = addImageView(anotherStates[i], GONE);
+        }
+
+        invalidate();
+    }
+
+    /**
+     * Sets the selected state as current
+     * @param state - state to be set
+     */
+    public void setCurrentState(int state) {
+        imageViews[currentState].setVisibility(GONE);
+        currentState = state;
+        imageViews[currentState].setVisibility(VISIBLE);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onClick(View view) {
         int previousState = currentState;
@@ -99,28 +145,8 @@ public class StateButton extends FrameLayout implements View.OnClickListener {
         }
     }
 
-    public void addStatesDrawable(@DrawableRes int defaultState,
-                                  @DrawableRes int... anotherStates) {
-        statesAmount = anotherStates.length + 1 + (hasDisabledState ? 1 : 0);
-        imageViews = new AppCompatImageView[statesAmount];
-
-        imageViews[DEFAULT_STATE] = addImageView(defaultState, VISIBLE);
-
-        if (hasDisabledState) {
-            imageViews[DEFAULT_STATE + 1] = addImageView(defaultState, GONE);
-        }
-
-        for (int i = 0; i < anotherStates.length; i++) {
-            imageViews[i + 1 + (hasDisabledState ? 1 : 0)] = addImageView(anotherStates[i], GONE);
-        }
-
-        invalidate();
-    }
-
-    public void setCurrentState(int state) {
-        imageViews[currentState].setVisibility(GONE);
-        currentState = state;
-        imageViews[currentState].setVisibility(VISIBLE);
+    private int getPositionOffset() {
+        return (hasDisabledState ? 1 : 0) + 1;
     }
 
     private void changeWithoutAnimation(final int currentPosition, int previousPosition) {

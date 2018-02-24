@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import github.com.st235.statebutton.StateButton;
-import github.com.st235.statebutton.events.OnStateChangedListener;
+import github.com.st235.statebutton.OnStateChangedListener;
 
 public class SampleActivity extends AppCompatActivity {
 
