@@ -14,7 +14,7 @@ publish {
     userOrg = 'st235'
     groupId = 'com.github.st235'
     artifactId = 'statebutton'
-    publishVersion = '0.0.1'
+    publishVersion = '0.0.2'
     desc = 'States everywhere.'
     website = 'https://github.com/st235/statebutton'
 }
@@ -25,17 +25,9 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "0.0.2"
     }
-
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
 }
 
 dependencies {
